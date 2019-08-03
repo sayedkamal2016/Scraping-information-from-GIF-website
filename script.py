@@ -36,29 +36,40 @@ new_communicates = ''
 if_found_message_today = False
 
 def check_new_messages():
-    page = requests.get(url, verify = False)
-    page_structure = html.fromstring(page.content) 
+  try:
+    page = requests.get(url)
+  except:
+    try:
+      page = requests.get(url, verify = False)
+    except:
+      messagebox.showerror('Error', 'Something went wrong')
+
+  page_structure = html.fromstring(page.content) 
+
+  try:  
     date_of_new_messages = page_structure.xpath('//tr[2]/td[3]/text()')
+  except:
+    messagebox.showerror('Error', 'Problem with downloading information from the site')
 
-    today = ("{:%d.%m.%Y}".format(date.today()))
-    global last_check_date_and_time
-    global new_communicates
-    global if_found_message_today
-    last_check_date_and_time = time.asctime(time.localtime(time.time()))
+  today = ("{:%d.%m.%Y}".format(date.today()))
+  global last_check_date_and_time
+  global new_communicates
+  global if_found_message_today
+  last_check_date_and_time = time.asctime(time.localtime(time.time()))
 
-    #if today in date_of_new_messages:
-    if True and not if_found_message_today:
-      new_communicates = 'New messages on GIF website!'
-      if_found_message_today = True
-      if (messagebox.askyesno("New messages in GIF", "Check new information in Główny Inspektorat Farmaceutyczny (GIF). Open the GIF page with messages?")) == True:
-        webbrowser.open(url)
-      else:
-        pass
+  #if today in date_of_new_messages:
+  if True and not if_found_message_today: #had to change after developing and tests!!
+    new_communicates = 'New messages on GIF website!'
+    if_found_message_today = True
+    if (messagebox.askyesno("New messages in GIF", "Check new information in Główny Inspektorat Farmaceutyczny (GIF). Open the GIF page with messages?")) == True:
+      webbrowser.open(url)
     else:
-        pass
-        #messagebox.showinfo("No new messages", "No new messages since last check") 
-    write_information_about_new_messages()  
-    write_date_time_last_check_new_information()
+      pass
+  else:
+      pass
+      #messagebox.showinfo("No new messages", "No new messages since last check") 
+  write_information_about_new_messages()  
+  write_date_time_last_check_new_information()
 
 def open_settings():
   messagebox.showwarning("Not implement yet", "It will be implement")
