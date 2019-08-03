@@ -15,14 +15,23 @@ from datetime import date
 
 url = 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
 
+last_check_date_and_time = ''
+new_communicates = 'No new messages'
+if_found_message_today = False
+if_check_manually_new_communicates = False
+reset_time_after_manually_check = True
 how_often_to_check_automatically = 1800
 counter = how_often_to_check_automatically 
 def counter_label(label):
   def count():
     global counter
+    global if_check_manually_new_communicates
     counter -= 1
     label.after(1000, count)
-    if counter > 0:
+    if if_check_manually_new_communicates and reset_time_after_manually_check:
+      counter = how_often_to_check_automatically
+      if_check_manually_new_communicates = False
+    elif counter > 0:
       label.config(text = str("Time to automate check: {} seconds ({} minutes)".format(counter, round(counter / 60, 2))))
     elif counter == 0:
       check_new_messages()
@@ -30,10 +39,6 @@ def counter_label(label):
       label.config(text = str("Checking new information on GIF website..."))
       counter = how_often_to_check_automatically
   count()
-
-last_check_date_and_time = ''
-new_communicates = ''
-if_found_message_today = False
 
 def check_new_messages():
   try:
@@ -57,8 +62,7 @@ def check_new_messages():
   global if_found_message_today
   last_check_date_and_time = time.asctime(time.localtime(time.time()))
 
-  #if today in date_of_new_messages:
-  if True and not if_found_message_today: #had to change after developing and tests!!
+  if today in date_of_new_messages:
     new_communicates = 'New messages on GIF website!'
     if_found_message_today = True
     if (messagebox.askyesno("New messages in GIF", "Check new information in Główny Inspektorat Farmaceutyczny (GIF). Open the GIF page with messages?")) == True:
@@ -67,9 +71,13 @@ def check_new_messages():
       pass
   else:
       pass
-      #messagebox.showinfo("No new messages", "No new messages since last check") 
   write_information_about_new_messages()  
   write_date_time_last_check_new_information()
+
+def manually_check_new_messages():
+  global if_check_manually_new_communicates
+  if_check_manually_new_communicates = True
+  check_new_messages()
 
 def open_settings():
   messagebox.showwarning("Not implement yet", "It will be implement")
@@ -105,7 +113,7 @@ menubar.add_cascade(label = "Options", menu = optionsmenu)
 menubar.add_cascade(label = "About", command = about)
 root.config(menu = menubar)
 check_icon_svg = PhotoImage(file = "check_icon.svg")
-check_button = Button(root, text = "Check new communicates", image = check_icon_svg, compound = "left", activebackground = "green", bg = "white", command = check_new_messages)
+check_button = Button(root, text = "Check new communicates", image = check_icon_svg, compound = "left", activebackground = "green", bg = "white", command = manually_check_new_messages)
 check_button.place(x = 35, y = 150)
 check_button.pack()
 label = Label(root, fg = "green")
