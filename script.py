@@ -94,6 +94,10 @@ def write_date_time_last_check_new_information():
   label_last_check.config(text = last_check, font = ("Helvetica", 9))
   label_last_check.pack()
 
+def callback():
+    if messagebox.askokcancel("Quit", "Do you really wish to quit?"):
+        root.destroy()
+
 root = Tk()
 root.title("Check_GIF")
 root.minsize(350,150)
@@ -120,4 +124,5 @@ label = Label(root, fg = "green")
 label.pack(side = BOTTOM)
 counter_label(label)
 check_new_messages()
+root.protocol("WM_DELETE_WINDOW", callback)
 root.mainloop()
