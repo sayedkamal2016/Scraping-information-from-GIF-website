@@ -94,16 +94,16 @@ def write_date_time_last_check_new_information():
   label_last_check.config(text = last_check, font = ("Helvetica", 9))
   label_last_check.pack()
 
-def confirmQuit():
+def confirm_quit():
     if messagebox.askokcancel("Quit", "Do you really wish to quit?"):
         root.destroy()
 
-def createMenu():
+def create_menu():
   menubar = Menu(root)
   optionsmenu = Menu(menubar, tearoff=0)
   optionsmenu.add_command(label = "Settings", command = open_settings)
   optionsmenu.add_separator()
-  optionsmenu.add_command(label = "Exit", command = confirmQuit)
+  optionsmenu.add_command(label = "Exit", command = confirm_quit)
   menubar.add_cascade(label = "Options", menu = optionsmenu)
   menubar.add_cascade(label = "About", command = about)
   return menubar
@@ -112,7 +112,7 @@ if __name__ == "__main__":
   root = Tk()
   root.title("Check_GIF")
   root.minsize(350,150)
-  menubar = createMenu()
+  menubar = create_menu()
   root.config(menu = menubar)
   label_new_communicates = Label(root)
   label_last_check = Label(root)
@@ -126,5 +126,5 @@ if __name__ == "__main__":
   label.pack(side = BOTTOM)
   counter_label(label)
   check_new_messages()
-  root.protocol("WM_DELETE_WINDOW", confirmQuit)
+  root.protocol("WM_DELETE_WINDOW", confirm_quit)
   root.mainloop()
