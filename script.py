@@ -103,7 +103,7 @@ def createMenu():
   optionsmenu = Menu(menubar, tearoff=0)
   optionsmenu.add_command(label = "Settings", command = open_settings)
   optionsmenu.add_separator()
-  optionsmenu.add_command(label = "Exit", command = root.quit)
+  optionsmenu.add_command(label = "Exit", command = confirmQuit)
   menubar.add_cascade(label = "Options", menu = optionsmenu)
   menubar.add_cascade(label = "About", command = about)
   return menubar
@@ -126,4 +126,5 @@ if __name__ == "__main__":
   label.pack(side = BOTTOM)
   counter_label(label)
   check_new_messages()
+  root.protocol("WM_DELETE_WINDOW", confirmQuit)
   root.mainloop()
