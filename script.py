@@ -81,6 +81,80 @@ def manually_check_new_messages():
 
 def open_settings():
   messagebox.showwarning("Not implement yet", "It will be implement")
+  global top_settings
+  top_settings = Toplevel(root)
+  top_settings.resizable(False, False)
+  top_settings.title("Settings")
+  
+  check_automation_checking(top_settings)
+  frequency_checking_new_messages(top_settings)
+  set_new_time_or_continue_after_manual_check(top_settings)
+  write_logs(top_settings)
+  ask_if_close_application(top_settings)
+
+  save_settings_button = Button(top_settings, text = "Save settings", command = save_settings)
+  save_settings_button.grid(column = 1, row = 10, sticky = E, padx = 9, pady = 9)
+
+  top_settings.mainloop()
+
+def ask_if_close_application(top_settings):
+  global confirm_close_application
+  confirm_close_application = IntVar()
+  confirm_close_application.set(True)
+  label_confirm_close = Label(top_settings, text = "Confirm exit from application:")
+  label_confirm_close.grid(column = 0, row = 8, rowspan = 2, sticky = W)
+  radiobutton_on = Radiobutton(top_settings, text = "Yes", variable = confirm_close_application, value = 1)
+  radiobutton_off = Radiobutton(top_settings, text = "No", variable = confirm_close_application, value = 0)
+  radiobutton_on.grid(column = 1, row = 8, sticky = W)
+  radiobutton_off.grid(column = 1, row = 9, sticky = W)
+
+def write_logs(top_settings):
+  global if_write_logs
+  if_write_logs = IntVar()
+  if_write_logs.set(False)
+  label_write_logs = Label(top_settings, text = "Write logs to file:")
+  label_write_logs.grid(column = 0, row = 6, rowspan = 2, sticky = W)
+  radiobutton_on = Radiobutton(top_settings, text = "Yes", variable = if_write_logs, value = 1)
+  radiobutton_off = Radiobutton(top_settings, text = "No", variable = if_write_logs, value = 0)
+  radiobutton_on.grid(column = 1, row = 6, sticky = W)
+  radiobutton_off.grid(column = 1, row = 7, sticky = W)
+
+def set_new_time_or_continue_after_manual_check(top_settings):
+  global reset_time_after_manually_check
+  reset_time_after_manually_check = IntVar()
+  reset_time_after_manually_check.set(False)
+  label_new_time_after_manual_check = Label(top_settings, text = "After checking manually:")
+  label_new_time_after_manual_check.grid(column = 0, row = 4, rowspan = 2, sticky = W)
+  radiobutton_on = Radiobutton(top_settings, text = "New time", variable = reset_time_after_manually_check, value = 1)
+  radiobutton_off = Radiobutton(top_settings, text = "Continue time", variable = reset_time_after_manually_check, value = 0)
+  radiobutton_on.grid(column = 1, row = 4, sticky = W)
+  radiobutton_off.grid(column = 1, row = 5, sticky = W)
+
+def frequency_checking_new_messages(top_settings):
+  global how_often_to_check_automatically
+  how_often_to_check_automatically = IntVar()
+  label_frequency = Label(top_settings, text = "Frequency of checking:")
+  label_frequency.grid(column = 0, row = 3, sticky = W)
+  spinbox_entry = Spinbox(top_settings, textvariable = how_often_to_check_automatically, from_ = 1, to = 120)
+  spinbox_entry.grid(column = 1, row = 3)
+
+def check_automation_checking(top_settings):
+  global if_check_automatic_new_communicates
+  if_check_automatic_new_communicates = IntVar()
+  if_check_automatic_new_communicates.set(False)
+  label_auto_checking = Label(top_settings, text = "Automatic checking:")
+  label_auto_checking.grid(column = 0, row = 0, rowspan = 2, sticky = W)
+  radiobutton_on = Radiobutton(top_settings, text = "Turn ON automatic checking", variable = if_check_automatic_new_communicates, value = True)
+  radiobutton_off = Radiobutton(top_settings, text = "Turn OFF automatic checking", variable = if_check_automatic_new_communicates, value = False)
+  radiobutton_on.grid(column = 1, row = 0)
+  radiobutton_off.grid(column = 1, row = 1)
+
+def save_settings():
+  print('if_check_automatic_new_communicates {} '.format(if_check_automatic_new_communicates.get()))
+  print('frequency_checking_new_messages {} '.format(how_often_to_check_automatically.get()))
+  print('reset_time_after_manually_check {} '.format(reset_time_after_manually_check.get()))
+  print('write_logs {} '.format(if_write_logs.get()))
+  print('confirm_close_application {} '.format(confirm_close_application.get()))
 
 def about():
   messagebox.showinfo("Information","The program checks messages on the GIF website (Main Pharmaceutical Inspectorate) and informs about new messages.")
