@@ -95,6 +95,9 @@ def open_settings():
   save_settings_button = Button(top_settings, text = "Save settings", command = save_settings)
   save_settings_button.grid(column = 1, row = 10, sticky = E, padx = 9, pady = 9)
 
+  cancel_settings_button = Button(top_settings, text = "Cancel", command = cancel)
+  cancel_settings_button.grid(column = 0, row = 10, sticky = E, padx = 10, pady = 10)
+
   top_settings.mainloop()
 
 def ask_if_close_application(top_settings):
@@ -156,6 +159,9 @@ def save_settings():
   print('write_logs {} '.format(if_write_logs.get()))
   print('confirm_close_application {} '.format(confirm_close_application.get()))
 
+def cancel():
+  top_settings.destroy()
+  
 def about():
   messagebox.showinfo("Information","The program checks messages on the GIF website (Main Pharmaceutical Inspectorate) and informs about new messages.")
 
