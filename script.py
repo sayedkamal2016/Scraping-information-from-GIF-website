@@ -17,6 +17,7 @@ url = 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
 
 last_check_date_and_time = ''
 new_communicates = 'No new messages'
+confirm_close = 1
 if_found_message_today = False
 if_check_manually_new_communicates = False
 reset_time_after_manually_check = True
@@ -103,7 +104,7 @@ def open_settings():
 def ask_if_close_application(top_settings):
   global confirm_close_application
   confirm_close_application = IntVar()
-  confirm_close_application.set(True)
+  confirm_close_application.set(1)
   label_confirm_close = Label(top_settings, text = "Confirm exit from application:")
   label_confirm_close.grid(column = 0, row = 8, rowspan = 2, sticky = W)
   radiobutton_on = Radiobutton(top_settings, text = "Yes", variable = confirm_close_application, value = 1)
@@ -153,11 +154,9 @@ def check_automation_checking(top_settings):
   radiobutton_off.grid(column = 1, row = 1)
 
 def save_settings():
-  print('if_check_automatic_new_communicates {} '.format(if_check_automatic_new_communicates.get()))
-  print('frequency_checking_new_messages {} '.format(how_often_to_check_automatically.get()))
-  print('reset_time_after_manually_check {} '.format(reset_time_after_manually_check.get()))
-  print('write_logs {} '.format(if_write_logs.get()))
-  print('confirm_close_application {} '.format(confirm_close_application.get()))
+  global confirm_close
+  confirm_close = confirm_close_application.get()
+  print('confirm_close {} '.format(confirm_close))
 
 def cancel():
   top_settings.destroy()
@@ -175,8 +174,11 @@ def write_date_time_last_check_new_information():
   label_last_check.pack()
 
 def confirm_quit():
+  if confirm_close:
     if messagebox.askokcancel("Quit", "Do you really wish to quit?"):
         root.destroy()
+  else:
+    root.destroy()
 
 def create_menu():
   menubar = Menu(root)
