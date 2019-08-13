@@ -15,6 +15,12 @@ from datetime import date
 
 url = 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
 
+def MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
+  return 60
+
+def MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
+  return 3600
+
 last_check_date_and_time = ''
 new_communicates = 'No new messages'
 confirm_close = 1
@@ -30,7 +36,7 @@ def counter_label(label):
     counter -= 1
     label.after(1000, count)
     if if_check_manually_new_communicates and reset_time_after_manually_check:
-      counter = how_often_to_check_automatically
+      counter = how_often_to_check
       if_check_manually_new_communicates = False
     elif counter > 0:
       label.config(text = str("Time to automate check: {} seconds ({} minutes)".format(counter, round(counter / 60, 2))))
@@ -38,7 +44,7 @@ def counter_label(label):
       check_new_messages()
     elif counter < 0:
       label.config(text = str("Checking new information on GIF website..."))
-      counter = how_often_to_check_automatically
+      counter = how_often_to_check
   count()
 
 def check_new_messages():
@@ -137,9 +143,9 @@ def set_new_time_or_continue_after_manual_check(top_settings):
 def frequency_checking_new_messages(top_settings):
   global how_often_to_check_automatically
   how_often_to_check_automatically = IntVar()
-  label_frequency = Label(top_settings, text = "Frequency of checking:")
+  label_frequency = Label(top_settings, text = "Frequency of checking (seconds):")
   label_frequency.grid(column = 0, row = 3, sticky = W)
-  spinbox_entry = Spinbox(top_settings, textvariable = how_often_to_check_automatically, from_ = 1, to = 120)
+  spinbox_entry = Spinbox(top_settings, textvariable = how_often_to_check_automatically, from_ = MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES(), to = MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
   spinbox_entry.grid(column = 1, row = 3)
 
 def check_automation_checking(top_settings):
@@ -157,6 +163,18 @@ def save_settings():
   global confirm_close
   confirm_close = confirm_close_application.get()
   print('confirm_close {} '.format(confirm_close))
+
+  global how_often_to_check
+  how_often_to_check = how_often_to_check_automatically.get()
+  if how_often_to_check < MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
+    how_often_to_check_automatically.set(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
+    how_often_to_check = MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()
+  elif how_often_to_check > MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
+    how_often_to_check_automatically.set(MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
+    how_often_to_check = MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()
+  else:
+    pass
+  print('how_often_to_check {} '.format(how_often_to_check))
 
 def cancel():
   top_settings.destroy()
