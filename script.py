@@ -13,7 +13,8 @@ import time
 from lxml import html
 from datetime import date
 
-url = 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
+def get_url():
+  return 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
 
 def MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
   return 60
@@ -26,6 +27,7 @@ new_communicates = 'No new messages'
 confirm_close = 1
 if_found_message_today = False
 if_check_manually_new_communicates = False
+if_automatic_checking_is_on = True
 reset_time_after_manually_check = True
 how_often_to_check_automatically = 1800
 counter = how_often_to_check_automatically 
@@ -35,24 +37,27 @@ def counter_label(label):
     global if_check_manually_new_communicates
     counter -= 1
     label.after(1000, count)
-    if if_check_manually_new_communicates and reset_time_after_manually_check:
-      counter = how_often_to_check
-      if_check_manually_new_communicates = False
-    elif counter > 0:
-      label.config(text = str("Time to automate check: {} seconds ({} minutes)".format(counter, round(counter / 60, 2))))
-    elif counter == 0:
-      check_new_messages()
-    elif counter < 0:
-      label.config(text = str("Checking new information on GIF website..."))
-      counter = how_often_to_check
+    if if_automatic_checking_is_on:
+      if if_check_manually_new_communicates and reset_time_after_manually_check:
+        counter = how_often_to_check
+        if_check_manually_new_communicates = False
+      elif counter > 0:
+        label.config(text = str("Time to automate check: {} seconds ({} minutes)".format(counter, round(counter / 60, 2))), fg = "green")
+      elif counter == 0:
+        check_new_messages()
+      elif counter < 0:
+        label.config(text = str("Checking new information on GIF website..."), fg = "orange")
+        counter = how_often_to_check
+    else:
+      label.config(text = str("Automatic checking disabled"), fg = "red")
   count()
 
 def check_new_messages():
   try:
-    page = requests.get(url)
+    page = requests.get(get_url())
   except:
     try:
-      page = requests.get(url, verify = False)
+      page = requests.get(get_url(), verify = False)
     except:
       messagebox.showerror('Error', 'Something went wrong')
 
@@ -73,7 +78,7 @@ def check_new_messages():
     new_communicates = 'New messages on GIF website!'
     if_found_message_today = True
     if (messagebox.askyesno("New messages in GIF", "Check new information in Główny Inspektorat Farmaceutyczny (GIF). Open the GIF page with messages?")) == True:
-      webbrowser.open(url)
+      webbrowser.open(get_url())
     else:
       pass
   else:
@@ -151,7 +156,7 @@ def frequency_checking_new_messages(top_settings):
 def check_automation_checking(top_settings):
   global if_check_automatic_new_communicates
   if_check_automatic_new_communicates = IntVar()
-  if_check_automatic_new_communicates.set(False)
+  if_check_automatic_new_communicates.set(True)
   label_auto_checking = Label(top_settings, text = "Automatic checking:")
   label_auto_checking.grid(column = 0, row = 0, rowspan = 2, sticky = W)
   radiobutton_on = Radiobutton(top_settings, text = "Turn ON automatic checking", variable = if_check_automatic_new_communicates, value = True)
@@ -175,6 +180,10 @@ def save_settings():
   else:
     pass
   print('how_often_to_check {} '.format(how_often_to_check))
+
+  global if_automatic_checking_is_on 
+  if_automatic_checking_is_on = if_check_automatic_new_communicates.get()
+  print('if_automatic_checking_is_on {} '.format(if_automatic_checking_is_on))
 
 def cancel():
   top_settings.destroy()
@@ -222,7 +231,7 @@ if __name__ == "__main__":
   check_button = Button(root, text = "Check new communicates", image = check_icon_svg, compound = "left", activebackground = "green", bg = "white", command = manually_check_new_messages)
   check_button.place(x = 35, y = 150)
   check_button.pack()
-  label = Label(root, fg = "green")
+  label = Label(root)
   label.pack(side = BOTTOM)
   counter_label(label)
   check_new_messages()
