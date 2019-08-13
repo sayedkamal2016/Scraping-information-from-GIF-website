@@ -13,7 +13,7 @@ import time
 from lxml import html
 from datetime import date
 
-def get_url():
+def GET_URL():
   return 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
 
 def MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
@@ -28,7 +28,7 @@ confirm_close = 1
 if_found_message_today = False
 if_check_manually_new_communicates = False
 if_automatic_checking_is_on = True
-reset_time_after_manually_check = True
+reset_time = True
 how_often_to_check_automatically = 1800
 counter = how_often_to_check_automatically 
 def counter_label(label):
@@ -38,7 +38,7 @@ def counter_label(label):
     counter -= 1
     label.after(1000, count)
     if if_automatic_checking_is_on:
-      if if_check_manually_new_communicates and reset_time_after_manually_check:
+      if if_check_manually_new_communicates and reset_time:
         counter = how_often_to_check
         if_check_manually_new_communicates = False
       elif counter > 0:
@@ -54,10 +54,10 @@ def counter_label(label):
 
 def check_new_messages():
   try:
-    page = requests.get(get_url())
+    page = requests.get(GET_URL())
   except:
     try:
-      page = requests.get(get_url(), verify = False)
+      page = requests.get(GET_URL(), verify = False)
     except:
       messagebox.showerror('Error', 'Something went wrong')
 
@@ -78,7 +78,7 @@ def check_new_messages():
     new_communicates = 'New messages on GIF website!'
     if_found_message_today = True
     if (messagebox.askyesno("New messages in GIF", "Check new information in Główny Inspektorat Farmaceutyczny (GIF). Open the GIF page with messages?")) == True:
-      webbrowser.open(get_url())
+      webbrowser.open(GET_URL())
     else:
       pass
   else:
@@ -184,6 +184,10 @@ def save_settings():
   global if_automatic_checking_is_on 
   if_automatic_checking_is_on = if_check_automatic_new_communicates.get()
   print('if_automatic_checking_is_on {} '.format(if_automatic_checking_is_on))
+
+  global reset_time
+  reset_time = reset_time_after_manually_check.get()
+  print('reset_time_after_manually_check {}'.format(reset_time))
 
 def cancel():
   top_settings.destroy()
