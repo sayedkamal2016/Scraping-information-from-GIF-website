@@ -28,7 +28,7 @@ confirm_close = 1
 if_found_message_today = False
 if_check_manually_new_communicates = False
 if_automatic_checking_is_on = True
-reset_time = True
+if_reset_time = True
 how_often_to_check_automatically = 1800
 counter = how_often_to_check_automatically 
 how_often_to_check = how_often_to_check_automatically
@@ -39,7 +39,7 @@ def counter_label(label):
     counter -= 1
     label.after(1000, count)
     if if_automatic_checking_is_on:
-      if if_check_manually_new_communicates and reset_time:
+      if if_check_manually_new_communicates and if_reset_time:
         counter = how_often_to_check
         if_check_manually_new_communicates = False
       elif counter > 0:
@@ -102,7 +102,6 @@ def open_settings():
   check_automation_checking(top_settings)
   frequency_checking_new_messages(top_settings)
   set_new_time_or_continue_after_manual_check(top_settings)
-  write_logs(top_settings)
   ask_if_close_application(top_settings)
 
   save_settings_button = Button(top_settings, text = "Save settings", font=('Verdana', 9,'bold'), background = "blue", command = save_settings)
@@ -126,17 +125,6 @@ def ask_if_close_application(top_settings):
   radiobutton_off = Radiobutton(top_settings, text = "No", variable = confirm_close_application, value = 0)
   radiobutton_on.grid(column = 1, row = 8, sticky = W)
   radiobutton_off.grid(column = 1, row = 9, sticky = W)
-
-def write_logs(top_settings):
-  global if_write_logs
-  if_write_logs = IntVar()
-  if_write_logs.set(False)
-  label_write_logs = Label(top_settings, text = "Write logs to file:")
-  label_write_logs.grid(column = 0, row = 6, rowspan = 2, sticky = W)
-  radiobutton_on = Radiobutton(top_settings, text = "Yes", variable = if_write_logs, value = 1)
-  radiobutton_off = Radiobutton(top_settings, text = "No", variable = if_write_logs, value = 0)
-  radiobutton_on.grid(column = 1, row = 6, sticky = W)
-  radiobutton_off.grid(column = 1, row = 7, sticky = W)
 
 def set_new_time_or_continue_after_manual_check(top_settings):
   global reset_time_after_manually_check
@@ -172,7 +160,6 @@ def set_default_settings():
   if_check_automatic_new_communicates.set(1)
   how_often_to_check_automatically.set(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
   reset_time_after_manually_check.set(1)
-  if_write_logs.set(1)
   confirm_close_application.set(1)
 
 def save_settings():
@@ -197,8 +184,8 @@ def save_settings():
   print('if_automatic_checking_is_on {} '.format(if_automatic_checking_is_on))
 
   global reset_time
-  reset_time = reset_time_after_manually_check.get()
-  print('reset_time_after_manually_check {}'.format(reset_time))
+  if_reset_time = reset_time_after_manually_check.get()
+  print('reset_time_after_manually_check {}'.format(if_reset_time))
 
   confirm_save()
   exit_from_settings()
