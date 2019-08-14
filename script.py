@@ -31,6 +31,7 @@ if_automatic_checking_is_on = True
 reset_time = True
 how_often_to_check_automatically = 1800
 counter = how_often_to_check_automatically 
+how_often_to_check = how_often_to_check_automatically
 def counter_label(label):
   def count():
     global counter
@@ -104,11 +105,14 @@ def open_settings():
   write_logs(top_settings)
   ask_if_close_application(top_settings)
 
-  save_settings_button = Button(top_settings, text = "Save settings", command = save_settings)
+  save_settings_button = Button(top_settings, text = "Save settings", font=('Verdana', 9,'bold'), background = "blue", command = save_settings)
   save_settings_button.grid(column = 1, row = 10, sticky = E, padx = 9, pady = 9)
 
-  cancel_settings_button = Button(top_settings, text = "Cancel", command = cancel)
+  cancel_settings_button = Button(top_settings, text = "Close", command = exit_from_settings)
   cancel_settings_button.grid(column = 0, row = 10, sticky = E, padx = 10, pady = 10)
+
+  default_settings_button = Button(top_settings, text = "Default (no save)", command = set_default_settings)
+  default_settings_button.grid(column = 0, row = 10, sticky = W, padx = 11, pady = 11)
 
   top_settings.mainloop()
 
@@ -164,6 +168,13 @@ def check_automation_checking(top_settings):
   radiobutton_on.grid(column = 1, row = 0)
   radiobutton_off.grid(column = 1, row = 1)
 
+def set_default_settings():
+  if_check_automatic_new_communicates.set(1)
+  how_often_to_check_automatically.set(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
+  reset_time_after_manually_check.set(1)
+  if_write_logs.set(1)
+  confirm_close_application.set(1)
+
 def save_settings():
   global confirm_close
   confirm_close = confirm_close_application.get()
@@ -189,7 +200,13 @@ def save_settings():
   reset_time = reset_time_after_manually_check.get()
   print('reset_time_after_manually_check {}'.format(reset_time))
 
-def cancel():
+  confirm_save()
+  exit_from_settings()
+
+def confirm_save():
+  messagebox.showinfo("Success","Settings saved.")
+
+def exit_from_settings():
   top_settings.destroy()
   
 def about():
