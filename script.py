@@ -96,6 +96,7 @@ def open_settings():
   messagebox.showwarning("Not implement yet", "It will be implement")
   global top_settings
   top_settings = Toplevel(root)
+  top_settings.iconbitmap('settings.ico')
   top_settings.resizable(False, False)
   top_settings.title("Settings")
   
@@ -197,7 +198,7 @@ def exit_from_settings():
   top_settings.destroy()
   
 def about():
-  messagebox.showinfo("Information","The program checks messages on the GIF website (Main Pharmaceutical Inspectorate) and informs about new messages.")
+  messagebox.showinfo("Information","The program checks messages on the GIF website (Main Pharmaceutical Inspectorate) and informs about new messages.\nYou can check the source of the code and make improvements https://github.com/olekstomek")
 
 def write_information_about_new_messages():
   label_new_communicates.config(text = new_communicates, font=("Helvetica", 18))
@@ -227,6 +228,7 @@ def create_menu():
 
 if __name__ == "__main__":
   root = Tk()
+  root.iconbitmap('main.ico')
   root.title("Check_GIF")
   root.minsize(350,150)
   menubar = create_menu()
