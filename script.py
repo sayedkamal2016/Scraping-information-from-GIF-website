@@ -17,38 +17,38 @@ def GET_URL():
   return 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
 
 def MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
-  return 60
+  return 300
 
 def MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
   return 3600
 
 last_check_date_and_time = ''
 new_communicates = 'No new messages'
-confirm_close = 1
-if_found_message_today = False
-if_check_manually_new_communicates = False
-if_automatic_checking_is_on = True
-if_reset_time = True
-how_often_to_check_automatically = 1800
-counter = how_often_to_check_automatically 
-how_often_to_check = how_often_to_check_automatically
+confirm_close_application_int = True
+found_message_today = False
+check_manually_new_communicates = False
+automatic_checking_is_on_int = True
+reset_time_after_manually_check_int = True
+how_often_to_check_intvar = 300
+counter = how_often_to_check_intvar 
+how_often_to_check_int = how_often_to_check_intvar
 def counter_label(label):
   def count():
     global counter
-    global if_check_manually_new_communicates
+    global check_manually_new_communicates
     counter -= 1
     label.after(1000, count)
-    if if_automatic_checking_is_on:
-      if if_check_manually_new_communicates and if_reset_time:
-        counter = how_often_to_check
-        if_check_manually_new_communicates = False
+    if automatic_checking_is_on_int:
+      if check_manually_new_communicates and reset_time_after_manually_check_int:
+        counter = how_often_to_check_int
+        check_manually_new_communicates = False
       elif counter > 0:
         label.config(text = str("Time to automate check: {} seconds ({} minutes)".format(counter, round(counter / 60, 2))), fg = "green")
       elif counter == 0:
         check_new_messages()
       elif counter < 0:
         label.config(text = str("Checking new information on GIF website..."), fg = "orange")
-        counter = how_often_to_check
+        counter = how_often_to_check_int
     else:
       label.config(text = str("Automatic checking disabled"), fg = "red")
   count()
@@ -72,12 +72,12 @@ def check_new_messages():
   today = ("{:%d.%m.%Y}".format(date.today()))
   global last_check_date_and_time
   global new_communicates
-  global if_found_message_today
+  global found_message_today
   last_check_date_and_time = time.asctime(time.localtime(time.time()))
 
   if today in date_of_new_messages:
     new_communicates = 'New messages on GIF website!'
-    if_found_message_today = True
+    found_message_today = True
     if (messagebox.askyesno("New messages in GIF", "Check new information in Główny Inspektorat Farmaceutyczny (GIF). Open the GIF page with messages?")) == True:
       webbrowser.open(GET_URL())
     else:
@@ -88,12 +88,11 @@ def check_new_messages():
   write_date_time_last_check_new_information()
 
 def manually_check_new_messages():
-  global if_check_manually_new_communicates
-  if_check_manually_new_communicates = True
+  global check_manually_new_communicates
+  check_manually_new_communicates = True
   check_new_messages()
 
 def open_settings():
-  messagebox.showwarning("Not implement yet", "It will be implement")
   global top_settings
   top_settings = Toplevel(root)
   top_settings.iconbitmap('settings.ico')
@@ -108,88 +107,93 @@ def open_settings():
   save_settings_button = Button(top_settings, text = "Save settings", font=('Verdana', 9,'bold'), background = "blue", command = save_settings)
   save_settings_button.grid(column = 1, row = 10, sticky = E, padx = 9, pady = 9)
 
-  cancel_settings_button = Button(top_settings, text = "Close", command = exit_from_settings)
+  cancel_settings_button = Button(top_settings, text = "Close settings", command = exit_from_settings)
   cancel_settings_button.grid(column = 0, row = 10, sticky = E, padx = 10, pady = 10)
 
-  default_settings_button = Button(top_settings, text = "Default (no save)", command = set_default_settings)
+  default_settings_button = Button(top_settings, text = "Default settings (no save)", command = set_default_settings)
   default_settings_button.grid(column = 0, row = 10, sticky = W, padx = 11, pady = 11)
 
   top_settings.mainloop()
 
 def ask_if_close_application(top_settings):
-  global confirm_close_application
-  confirm_close_application = IntVar()
-  confirm_close_application.set(1)
-  label_confirm_close = Label(top_settings, text = "Confirm exit from application:")
-  label_confirm_close.grid(column = 0, row = 8, rowspan = 2, sticky = W)
-  radiobutton_on = Radiobutton(top_settings, text = "Yes", variable = confirm_close_application, value = 1)
-  radiobutton_off = Radiobutton(top_settings, text = "No", variable = confirm_close_application, value = 0)
-  radiobutton_on.grid(column = 1, row = 8, sticky = W)
-  radiobutton_off.grid(column = 1, row = 9, sticky = W)
+  global confirm_close_application_intvar
+  confirm_close_application_intvar = IntVar()
+  confirm_close_application_intvar.set(confirm_close_application_int)
+  label_confirm_close_application = Label(top_settings, text = "Confirm exit from application:")
+  label_confirm_close_application.grid(column = 0, row = 8, rowspan = 2, sticky = W)
+  radiobutton_confirm_close_application_on = Radiobutton(top_settings, text = "Yes", variable = confirm_close_application_intvar, value = 1)
+  radiobutton_confirm_close_application_off = Radiobutton(top_settings, text = "No", variable = confirm_close_application_intvar, value = 0)
+  radiobutton_confirm_close_application_on.grid(column = 1, row = 8, sticky = W)
+  radiobutton_confirm_close_application_off.grid(column = 1, row = 9, sticky = W)
 
 def set_new_time_or_continue_after_manual_check(top_settings):
-  global reset_time_after_manually_check
-  reset_time_after_manually_check = IntVar()
-  reset_time_after_manually_check.set(False)
-  label_new_time_after_manual_check = Label(top_settings, text = "After checking manually:")
-  label_new_time_after_manual_check.grid(column = 0, row = 4, rowspan = 2, sticky = W)
-  radiobutton_on = Radiobutton(top_settings, text = "New time", variable = reset_time_after_manually_check, value = 1)
-  radiobutton_off = Radiobutton(top_settings, text = "Continue time", variable = reset_time_after_manually_check, value = 0)
-  radiobutton_on.grid(column = 1, row = 4, sticky = W)
-  radiobutton_off.grid(column = 1, row = 5, sticky = W)
+  global reset_time_after_manually_check_intvar
+  reset_time_after_manually_check_intvar = IntVar()
+  reset_time_after_manually_check_intvar.set(reset_time_after_manually_check_int)
+  label_reset_time_after_manually_check_ = Label(top_settings, text = "After checking manually:")
+  label_reset_time_after_manually_check_.grid(column = 0, row = 4, rowspan = 2, sticky = W)
+  radiobutton_reset_time_after_manually_check_on = Radiobutton(top_settings, text = "New time (reset time)", variable = reset_time_after_manually_check_intvar, value = 1)
+  radiobutton_reset_time_after_manually_check_off = Radiobutton(top_settings, text = "Continue time", variable = reset_time_after_manually_check_intvar, value = 0)
+  radiobutton_reset_time_after_manually_check_on.grid(column = 1, row = 4, sticky = W)
+  radiobutton_reset_time_after_manually_check_off.grid(column = 1, row = 5, sticky = W)
 
 def frequency_checking_new_messages(top_settings):
-  global how_often_to_check_automatically
-  how_often_to_check_automatically = IntVar()
-  label_frequency = Label(top_settings, text = "Frequency of checking (seconds):")
+  global how_often_to_check_intvar
+  how_often_to_check_intvar = IntVar()
+  how_often_to_check_intvar.set(how_often_to_check_int)
+  label_frequency = Label(top_settings, text = "Frequency of checking (in seconds from {} to {}):".format(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES(), MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()))
   label_frequency.grid(column = 0, row = 3, sticky = W)
-  spinbox_entry = Spinbox(top_settings, textvariable = how_often_to_check_automatically, from_ = MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES(), to = MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
+  spinbox_entry = Spinbox(top_settings, textvariable = how_often_to_check_intvar, from_ = MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES(), to = MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
   spinbox_entry.grid(column = 1, row = 3)
 
 def check_automation_checking(top_settings):
-  global if_check_automatic_new_communicates
-  if_check_automatic_new_communicates = IntVar()
-  if_check_automatic_new_communicates.set(True)
-  label_auto_checking = Label(top_settings, text = "Automatic checking:")
-  label_auto_checking.grid(column = 0, row = 0, rowspan = 2, sticky = W)
-  radiobutton_on = Radiobutton(top_settings, text = "Turn ON automatic checking", variable = if_check_automatic_new_communicates, value = True)
-  radiobutton_off = Radiobutton(top_settings, text = "Turn OFF automatic checking", variable = if_check_automatic_new_communicates, value = False)
-  radiobutton_on.grid(column = 1, row = 0)
-  radiobutton_off.grid(column = 1, row = 1)
+  global automatic_checking_is_on_intvar
+  automatic_checking_is_on_intvar = IntVar()
+  automatic_checking_is_on_intvar.set(automatic_checking_is_on_int)
+  label_automatic_checking = Label(top_settings, text = "Automatic checking:")
+  label_automatic_checking.grid(column = 0, row = 0, rowspan = 2, sticky = W)
+  radiobutton_automatic_checking_on = Radiobutton(top_settings, text = "Turn ON automatic checking", variable = automatic_checking_is_on_intvar, value = True)
+  radiobutton_automatic_checking_off = Radiobutton(top_settings, text = "Turn OFF automatic checking", variable = automatic_checking_is_on_intvar, value = False)
+  radiobutton_automatic_checking_on.grid(column = 1, row = 0)
+  radiobutton_automatic_checking_off.grid(column = 1, row = 1)
 
 def set_default_settings():
-  if_check_automatic_new_communicates.set(1)
-  how_often_to_check_automatically.set(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
-  reset_time_after_manually_check.set(1)
-  confirm_close_application.set(1)
+  automatic_checking_is_on_intvar.set(1)
+  how_often_to_check_intvar.set(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
+  reset_time_after_manually_check_intvar.set(1)
+  confirm_close_application_intvar.set(1)
 
 def save_settings():
-  global confirm_close
-  confirm_close = confirm_close_application.get()
-  print('confirm_close {} '.format(confirm_close))
+  global confirm_close_application_int
+  confirm_close_application_int = confirm_close_application_intvar.get()
+  print('confirm_close {} '.format(confirm_close_application_int))
 
-  global how_often_to_check
-  how_often_to_check = how_often_to_check_automatically.get()
-  if how_often_to_check < MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
-    how_often_to_check_automatically.set(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
-    how_often_to_check = MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()
-  elif how_often_to_check > MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
-    how_often_to_check_automatically.set(MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
-    how_often_to_check = MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()
-  else:
-    pass
-  print('how_often_to_check {} '.format(how_often_to_check))
+  global how_often_to_check_int
+  how_often_to_check_int = how_often_to_check_intvar.get()
+  how_often_to_check_int = vaidate_time_for_automatic_checking(how_often_to_check_int)
+  print('how_often_to_check_int {} '.format(how_often_to_check_int))
 
-  global if_automatic_checking_is_on 
-  if_automatic_checking_is_on = if_check_automatic_new_communicates.get()
-  print('if_automatic_checking_is_on {} '.format(if_automatic_checking_is_on))
+  global automatic_checking_is_on_int 
+  automatic_checking_is_on_int = automatic_checking_is_on_intvar.get()
+  print('automatic_checking_is_on_int {} '.format(automatic_checking_is_on_int))
 
-  global reset_time
-  if_reset_time = reset_time_after_manually_check.get()
-  print('reset_time_after_manually_check {}'.format(if_reset_time))
+  global reset_time_after_manually_check_int
+  reset_time_after_manually_check_int = reset_time_after_manually_check_intvar.get()
+  print('reset_time_after_manually_check_int {}'.format(reset_time_after_manually_check_int))
 
   confirm_save()
   exit_from_settings()
+
+def vaidate_time_for_automatic_checking(how_often_to_check_int):
+    if how_often_to_check_int < MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
+      how_often_to_check_intvar.set(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
+      how_often_to_check_int = MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()
+    elif how_often_to_check_int > MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
+      how_often_to_check_intvar.set(MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
+      how_often_to_check_int = MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()
+    else:
+      pass
+    return how_often_to_check_int
 
 def confirm_save():
   messagebox.showinfo("Success","Settings saved.")
@@ -210,7 +214,7 @@ def write_date_time_last_check_new_information():
   label_last_check.pack()
 
 def confirm_quit():
-  if confirm_close:
+  if confirm_close_application_int:
     if messagebox.askokcancel("Quit", "Do you really wish to quit?"):
         root.destroy()
   else:
