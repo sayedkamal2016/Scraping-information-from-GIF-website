@@ -168,25 +168,32 @@ def set_default_settings():
   confirm_close_application_intvar.set(1)
 
 def save_settings():
-  global confirm_close_application_int
-  confirm_close_application_int = confirm_close_application_intvar.get()
-  print('confirm_close {} '.format(confirm_close_application_int))
+  global automatic_checking_is_on_int 
+  automatic_checking_is_on_int = automatic_checking_is_on_intvar.get()
+  print('automatic_checking_is_on_int {} '.format(automatic_checking_is_on_int))
 
   global how_often_to_check_int
   how_often_to_check_int = how_often_to_check_intvar.get()
   how_often_to_check_int = vaidate_time_for_automatic_checking(how_often_to_check_int)
   print('how_often_to_check_int {} '.format(how_often_to_check_int))
 
-  global automatic_checking_is_on_int 
-  automatic_checking_is_on_int = automatic_checking_is_on_intvar.get()
-  print('automatic_checking_is_on_int {} '.format(automatic_checking_is_on_int))
-
   global reset_time_after_manually_check_int
   reset_time_after_manually_check_int = reset_time_after_manually_check_intvar.get()
   print('reset_time_after_manually_check_int {}'.format(reset_time_after_manually_check_int))
 
+  global confirm_close_application_int
+  confirm_close_application_int = confirm_close_application_intvar.get()
+  print('confirm_close {} '.format(confirm_close_application_int))
+
+  save_settings_to_file()
   confirm_save()
   exit_from_settings()
+
+def save_settings_to_file():
+    settings_config = [str (automatic_checking_is_on_int), str (how_often_to_check_int), str (reset_time_after_manually_check_int), str (confirm_close_application_int)]
+    with open("settings.txt", "w") as settings_file:
+        settings_file.write('\n'.join(settings_config))
+        settings_file.close()
 
 def vaidate_time_for_automatic_checking(how_often_to_check_int):
     if how_often_to_check_int < MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
