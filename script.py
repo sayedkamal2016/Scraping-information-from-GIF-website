@@ -16,22 +16,26 @@ from datetime import date
 def GET_URL():
   return 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
 
+with open('settings.txt', 'r') as settings_file:
+    settings_config = [element.strip() for element in settings_file]
+
 def MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
   return 300
 
 def MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
   return 3600
 
-last_check_date_and_time = ''
-new_communicates = 'No new messages'
-confirm_close_application_int = True
-found_message_today = False
-check_manually_new_communicates = False
-automatic_checking_is_on_int = True
-reset_time_after_manually_check_int = True
-how_often_to_check_intvar = 300
+print(settings_config)
+automatic_checking_is_on_int = int (settings_config[0])
+how_often_to_check_intvar = int (settings_config[1])
 counter = how_often_to_check_intvar 
 how_often_to_check_int = how_often_to_check_intvar
+reset_time_after_manually_check_int = int (settings_config[2])
+confirm_close_application_int = int (settings_config[3])
+found_message_today = False
+check_manually_new_communicates = False
+last_check_date_and_time = ''
+new_communicates = 'No new messages'
 def counter_label(label):
   def count():
     global counter
