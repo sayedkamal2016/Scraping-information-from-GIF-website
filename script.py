@@ -201,8 +201,14 @@ def save_settings():
   automatic_checking_is_on_int = automatic_checking_is_on_intvar.get()
 
   global how_often_to_check_int
-  how_often_to_check_int = how_often_to_check_intvar.get()
-  how_often_to_check_int = vaidate_time_for_automatic_checking(how_often_to_check_int)
+  try:
+    how_often_to_check_int = how_often_to_check_intvar.get()
+    how_often_to_check_int = vaidate_time_for_automatic_checking(how_often_to_check_int)
+  except:
+    messagebox.showwarning("Warning!", "The value is not a number. The check frequency is set to {} seconds."
+      .format(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()))
+    how_often_to_check_intvar.set(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
+    how_often_to_check_int = MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()
 
   global reset_time_after_manually_check_int
   reset_time_after_manually_check_int = reset_time_after_manually_check_intvar.get()
@@ -215,7 +221,8 @@ def save_settings():
   exit_from_settings()
 
 def save_settings_to_file():
-  settings_config = [str (automatic_checking_is_on_int), str (how_often_to_check_int), str (reset_time_after_manually_check_int), str (confirm_close_application_int)]
+  settings_config = [str (automatic_checking_is_on_int), str (how_often_to_check_int), 
+                    str (reset_time_after_manually_check_int), str (confirm_close_application_int)]
   with open(FILE_SETTINGS, "w") as settings_file:
     settings_file.write('\n'.join(settings_config))
     settings_file.close()
