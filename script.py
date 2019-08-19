@@ -10,14 +10,32 @@ from tkinter import Label, Entry, Spinbox, PhotoImage
 import requests
 import webbrowser
 import time
+import os
+import sys
 from lxml import html
 from datetime import date
 
 def GET_URL():
   return 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
 
-with open('settings.txt', 'r') as settings_file:
-    settings_config = [element.strip() for element in settings_file]
+FILE_SETTINGS = "settings.txt"
+
+def read_settings_from_file():
+  with open(FILE_SETTINGS, 'r') as settings_file:
+      settings_config = [element.strip() for element in settings_file]
+      settings_file.close()
+  return settings_config
+
+try:
+  settings_config = read_settings_from_file()
+except:
+  try:
+    settings_file = open(FILE_SETTINGS, "w+")
+    settings_file.write('1\n600\n1\n1')
+    settings_file.close()
+    settings_config = read_settings_from_file()
+  except:
+    messagebox.showerror("Error","The settings cannot be loaded")
 
 def MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
   return 300
@@ -26,12 +44,20 @@ def MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
   return 3600
 
 print(settings_config)
-automatic_checking_is_on_int = int (settings_config[0])
-how_often_to_check_intvar = int (settings_config[1])
-counter = how_often_to_check_intvar 
-how_often_to_check_int = how_often_to_check_intvar
-reset_time_after_manually_check_int = int (settings_config[2])
-confirm_close_application_int = int (settings_config[3])
+try:
+  automatic_checking_is_on_int = int (settings_config[0])
+  how_often_to_check_intvar = int (settings_config[1])
+  counter = how_often_to_check_intvar 
+  how_often_to_check_int = how_often_to_check_intvar
+  reset_time_after_manually_check_int = int (settings_config[2])
+  confirm_close_application_int = int (settings_config[3])
+except:
+  try:
+    os.remove(FILE_SETTINGS)
+    os.execv(sys.executable, ['python'] + sys.argv)
+  except:
+    os.execv(__file__, sys.argv)
+  
 found_message_today = False
 check_manually_new_communicates = False
 last_check_date_and_time = ''
