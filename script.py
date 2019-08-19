@@ -18,12 +18,12 @@ from datetime import date
 def GET_URL():
   return 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
 
-FILE_SETTINGS = "settings.txt"
+FILE_SETTINGS = "settings"
 
 def read_settings_from_file():
   with open(FILE_SETTINGS, 'r') as settings_file:
-      settings_config = [element.strip() for element in settings_file]
-      settings_file.close()
+    settings_config = [element.strip() for element in settings_file]
+    settings_file.close()
   return settings_config
 
 try:
@@ -43,7 +43,6 @@ def MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
 def MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
   return 3600
 
-print(settings_config)
 try:
   automatic_checking_is_on_int = int (settings_config[0])
   how_often_to_check_intvar = int (settings_config[1])
@@ -162,8 +161,10 @@ def set_new_time_or_continue_after_manual_check(top_settings):
   reset_time_after_manually_check_intvar.set(reset_time_after_manually_check_int)
   label_reset_time_after_manually_check_ = Label(top_settings, text = "After checking manually:")
   label_reset_time_after_manually_check_.grid(column = 0, row = 4, rowspan = 2, sticky = W)
-  radiobutton_reset_time_after_manually_check_on = Radiobutton(top_settings, text = "New time (reset time)", variable = reset_time_after_manually_check_intvar, value = 1)
-  radiobutton_reset_time_after_manually_check_off = Radiobutton(top_settings, text = "Continue time", variable = reset_time_after_manually_check_intvar, value = 0)
+  radiobutton_reset_time_after_manually_check_on = Radiobutton(top_settings, text = "New time (reset time)", 
+    variable = reset_time_after_manually_check_intvar, value = 1)
+  radiobutton_reset_time_after_manually_check_off = Radiobutton(top_settings, text = "Continue time", 
+    variable = reset_time_after_manually_check_intvar, value = 0)
   radiobutton_reset_time_after_manually_check_on.grid(column = 1, row = 4, sticky = W)
   radiobutton_reset_time_after_manually_check_off.grid(column = 1, row = 5, sticky = W)
 
@@ -171,9 +172,11 @@ def frequency_checking_new_messages(top_settings):
   global how_often_to_check_intvar
   how_often_to_check_intvar = IntVar()
   how_often_to_check_intvar.set(how_often_to_check_int)
-  label_frequency = Label(top_settings, text = "Frequency of checking (in seconds from {} to {}):".format(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES(), MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()))
+  label_frequency = Label(top_settings, text = "Frequency of checking (in seconds from {} to {}):"
+    .format(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES(), MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()))
   label_frequency.grid(column = 0, row = 3, sticky = W)
-  spinbox_entry = Spinbox(top_settings, textvariable = how_often_to_check_intvar, from_ = MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES(), to = MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
+  spinbox_entry = Spinbox(top_settings, textvariable = how_often_to_check_intvar, 
+    from_ = MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES(), to = MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
   spinbox_entry.grid(column = 1, row = 3)
 
 def check_automation_checking(top_settings):
@@ -196,41 +199,37 @@ def set_default_settings():
 def save_settings():
   global automatic_checking_is_on_int 
   automatic_checking_is_on_int = automatic_checking_is_on_intvar.get()
-  print('automatic_checking_is_on_int {} '.format(automatic_checking_is_on_int))
 
   global how_often_to_check_int
   how_often_to_check_int = how_often_to_check_intvar.get()
   how_often_to_check_int = vaidate_time_for_automatic_checking(how_often_to_check_int)
-  print('how_often_to_check_int {} '.format(how_often_to_check_int))
 
   global reset_time_after_manually_check_int
   reset_time_after_manually_check_int = reset_time_after_manually_check_intvar.get()
-  print('reset_time_after_manually_check_int {}'.format(reset_time_after_manually_check_int))
 
   global confirm_close_application_int
   confirm_close_application_int = confirm_close_application_intvar.get()
-  print('confirm_close {} '.format(confirm_close_application_int))
 
   save_settings_to_file()
   confirm_save()
   exit_from_settings()
 
 def save_settings_to_file():
-    settings_config = [str (automatic_checking_is_on_int), str (how_often_to_check_int), str (reset_time_after_manually_check_int), str (confirm_close_application_int)]
-    with open("settings.txt", "w") as settings_file:
-        settings_file.write('\n'.join(settings_config))
-        settings_file.close()
+  settings_config = [str (automatic_checking_is_on_int), str (how_often_to_check_int), str (reset_time_after_manually_check_int), str (confirm_close_application_int)]
+  with open(FILE_SETTINGS, "w") as settings_file:
+    settings_file.write('\n'.join(settings_config))
+    settings_file.close()
 
 def vaidate_time_for_automatic_checking(how_often_to_check_int):
-    if how_often_to_check_int < MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
-      how_often_to_check_intvar.set(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
-      how_often_to_check_int = MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()
-    elif how_often_to_check_int > MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
-      how_often_to_check_intvar.set(MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
-      how_often_to_check_int = MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()
-    else:
-      pass
-    return how_often_to_check_int
+  if how_often_to_check_int < MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
+    how_often_to_check_intvar.set(MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
+    how_often_to_check_int = MINIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()
+  elif how_often_to_check_int > MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES():
+    how_often_to_check_intvar.set(MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES())
+    how_often_to_check_int = MAXIMUM_FREQUENCY_CHECKING_NEW_MESSAGES()
+  else:
+    pass
+  return how_often_to_check_int
 
 def confirm_save():
   messagebox.showinfo("Success","Settings saved.")
@@ -253,7 +252,7 @@ def write_date_time_last_check_new_information():
 def confirm_quit():
   if confirm_close_application_int:
     if messagebox.askokcancel("Quit", "Do you really wish to quit?"):
-        root.destroy()
+      root.destroy()
   else:
     root.destroy()
 
@@ -279,7 +278,8 @@ if __name__ == "__main__":
   write_information_about_new_messages()
   write_date_time_last_check_new_information()
   check_icon_svg = PhotoImage(file = "check_icon.svg")
-  check_button = Button(root, text = "Check new communicates", image = check_icon_svg, compound = "left", activebackground = "green", bg = "white", command = manually_check_new_messages)
+  check_button = Button(root, text = "Check new communicates", image = check_icon_svg, compound = "left", 
+    activebackground = "green", bg = "white", command = manually_check_new_messages)
   check_button.place(x = 35, y = 150)
   check_button.pack()
   label = Label(root)
