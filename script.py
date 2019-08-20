@@ -19,6 +19,7 @@ def GET_URL():
   return 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
 
 FILE_SETTINGS = "settings"
+the_message_has_already_been_displayed = False
 
 def read_settings_from_file():
   with open(FILE_SETTINGS, 'r') as settings_file:
@@ -104,8 +105,10 @@ def check_new_messages():
   global found_message_today
   last_check_date_and_time = time.asctime(time.localtime(time.time()))
 
-  if today in date_of_new_messages:
+  global the_message_has_already_been_displayed
+  if today in date_of_new_messages and not the_message_has_already_been_displayed:
     new_communicates = 'New messages on GIF website!'
+    the_message_has_already_been_displayed = True
     found_message_today = True
     if (messagebox.askyesno("New messages in GIF", "Check new information in Główny Inspektorat Farmaceutyczny (GIF). Open the GIF page with messages?")) == True:
       webbrowser.open(GET_URL())
@@ -118,6 +121,8 @@ def check_new_messages():
 
 def manually_check_new_messages():
   global check_manually_new_communicates
+  global the_message_has_already_been_displayed
+  the_message_has_already_been_displayed = False
   check_manually_new_communicates = True
   check_new_messages()
 
