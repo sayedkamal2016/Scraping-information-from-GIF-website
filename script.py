@@ -1,22 +1,17 @@
-from tkinter import messagebox
-from tkinter import Button
-from tkinter import Tk
-from tkinter import Toplevel
-from tkinter import Menu
-from tkinter import IntVar
-from tkinter import Radiobutton
-from tkinter import W, X, E, BOTTOM, LEFT
-from tkinter import Label, Entry, Spinbox, PhotoImage
-import requests
-import webbrowser
-import time
 import os
 import sys
-from lxml import html
+import time
+import webbrowser
 from datetime import date
+from tkinter import (BOTTOM, LEFT, Button, E, Entry, IntVar, Label, Menu,
+                     PhotoImage, Radiobutton, Spinbox, Tk, Toplevel, W, X,
+                     messagebox)
+
+import requests
+from lxml import html
 
 def GET_URL():
-  return 'https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje'
+  return 'https://rdg.rejestrymedyczne.csioz.gov.pl/'
 
 FILE_SETTINGS = "settings"
 the_message_has_already_been_displayed = False
@@ -94,12 +89,13 @@ def check_new_messages():
 
   page_structure = html.fromstring(page.content) 
 
-  try:  
-    date_of_new_messages = page_structure.xpath('//tr[2]/td[3]/text()')
-  except:
+  date_of_new_messages = page_structure.xpath('//table/tbody/tr[1]/td[3]/text()')
+  if len(date_of_new_messages) == 0:
     messagebox.showerror('Error', 'Problem with downloading information from the site')
+  else:
+    pass
 
-  today = ("{:%d.%m.%Y}".format(date.today()))
+  today = ("{:%Y-%m-%d}".format(date.today()))
   global last_check_date_and_time
   global new_communicates
   global found_message_today
@@ -129,6 +125,7 @@ def manually_check_new_messages():
 def open_settings():
   global top_settings
   top_settings = Toplevel(root)
+  center_window(top_settings, 520, 240)
   top_settings.iconbitmap('settings.ico')
   top_settings.resizable(False, False)
   top_settings.title("Settings")
@@ -278,11 +275,21 @@ def create_menu():
   menubar.add_cascade(label = "About", command = about)
   return menubar
 
+def center_window(root, width, height):
+  screen_width = root.winfo_screenwidth()
+  screen_height = root.winfo_screenheight()
+  x = (screen_width/2) - (width/2)
+  y = (screen_height/2) - (height/2)
+  root.geometry('%dx%d+%d+%d' % (width, height, x, y))
+
 if __name__ == "__main__":
+  width_application = 350
+  height_application = 150
   root = Tk()
+  center_window(root, width_application, height_application)
   root.iconbitmap('main.ico')
   root.title("Check_GIF")
-  root.minsize(350,150)
+  root.minsize(width_application,height_application)
   menubar = create_menu()
   root.config(menu = menubar)
   label_new_communicates = Label(root)
