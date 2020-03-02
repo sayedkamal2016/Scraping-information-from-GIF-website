@@ -1,6 +1,7 @@
 # Scraping-information-from-GIF-website
 The program checks messages on the GIF website (Main Pharmaceutical Inspectorate) and informs about new messages.
 
+You can simple run app via e.g. double click). Download it from [releases](https://github.com/olekstomek/Scraping-information-from-GIF-website/releases) 
 
 Program written in Python using tkinter. You may need to install requests, webbrowser, lxml.
 
