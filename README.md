@@ -1,12 +1,14 @@
 # Scraping-information-from-GIF-website
 The program checks messages on the GIF website (Main Pharmaceutical Inspectorate) and informs about new messages.
 
+You can simple run app via e.g. double click). Download it from [releases](https://github.com/olekstomek/Scraping-information-from-GIF-website/releases) 
 
 Program written in Python using tkinter. You may need to install requests, webbrowser, lxml.
 
-The program's task is to automatically check whether new decisions on pharmaceutical products appeared on the website of the Main Pharmaceutical Inspectorate (https://gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje).
+The program's task is to automatically check whether new decisions on pharmaceutical products appeared on the website of the Main Pharmaceutical Inspectorate (https://rdg.rejestrymedyczne.csioz.gov.pl/). 
+Old page: https://archiwum.gif.gov.pl/pl/decyzje-i-komunikaty/decyzje/decyzje
 
-![GIF](https://user-images.githubusercontent.com/26818304/63369461-4b6a5200-c380-11e9-8b4b-33b9a295f91e.png)
+![](gif_pharmacy.gif)
 
 In the main window:
 - if you see the message "No new messages" it means that currently no new information was found on the site,
@@ -21,3 +23,5 @@ In the settings you can:
 - you can set whether the program should ask you before closing the program (option to avoid accidental closing of the program)
 
 The program saves the settings in a text file. If the file does not exist, the program will automatically create a file with default settings (Automatic checking: Yes, Frequency of checking: 600 seconds, After checking manually: New time, Confirm exit from application: Yes). You can always choose the button in the settings that will restore the default settings - set the parameters as above and check frequency to 300 seconds (minimum value). If you enter a value other than the number in the check frequency field (e.g. text string), the program will automatically take the value of 300 seconds. If you set the check time above 3600 seconds, the value 3600 will be set, the same if the time is set below 300 seconds - then the value will be set to a minimum value of 300 seconds. If it turns out that the text file in which the settings are corrupted (e.g. all parameters that the program needs to load all settings are missing), the program will automatically delete the damaged file, create a new file with settings and the program will restart automatically.
+
+![GIF](https://user-images.githubusercontent.com/26818304/63369461-4b6a5200-c380-11e9-8b4b-33b9a295f91e.png)
